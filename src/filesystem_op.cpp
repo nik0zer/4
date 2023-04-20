@@ -128,18 +128,13 @@ void DirInfo::scan_path()
 std::ostream& operator<<(std::ostream& ostream, DirectoryLogScan const& scan)
 {
     ostream<<"path: "<<scan._path<<std::endl<<"files:"<<std::endl;
-    std::cout.width(10);
-    std::cout<<"Process";
-    std::cout<<"Trace";
-    std::cout<<"Debug";
-    std::cout<<"Info";
-    std::cout<<"Warn";
-    std::cout<<"Error";
+    std::cout<<std::setw(40)<<std::left<<"Process"<<std::setw(20)<<"Trace"<<std::setw(20)<<"Debug"<<std::setw(20)<<"Info"
+    <<std::setw(20)<<"Warn"<<std::setw(20)<<"Error"<<std::endl;
     for(auto i : scan.log_statistics)
     {
-        ostream<<i.first<<" "<<"  Trace: "<<i.second.trace<<
-        "  Debug: "<<i.second.debug<<"  Info: "<<i.second.info<<
-        "  Warn: "<<i.second.warn<<"  Error: "<<i.second.error<<std::endl;
+        ostream<<std::setw(40)<<std::left<<i.first<<std::setw(20)<<i.second.trace<<
+        std::setw(20)<<i.second.debug<<std::setw(20)<<i.second.info<<
+        std::setw(20)<<i.second.warn<<std::setw(20)<<i.second.error<<std::endl;
     }
     return ostream;
 }
