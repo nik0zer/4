@@ -37,9 +37,57 @@ void DirectoryLogScan::collect_files(std::shared_ptr<DirInfo> dir_info_ptr)
 
 void DirectoryLogScan::analyze_log_files()
 {
+    std::vector<std::shared_ptr<std::thread>> threads;
     for(auto i : path_files_info)
     {
-        analyze_file(i);
+        threads.push_back(std::shared_ptr<std::thread>(new std::thread(&DirectoryLogScan::analyze_file, this, i)));
+    }
+    for(auto i : threads)
+    {
+        i->join();
+    }
+}
+
+void DirectoryLogScan::line_parse(std::string line)
+{
+    int pos = line.find('[');
+    pos = line.find('[', pos + 1);
+    int endpos = line.find(']', pos + 1);
+    std::string log_level = line.substr(pos + 1, endpos - pos - 1);
+    pos = line.find('[', pos + 1);
+    endpos = line.find(']', pos + 1);
+    std::string process_name = line.substr(pos + 1, endpos - pos - 1);
+
+
+    if(log_statistics.find(process_name) == log_statistics.end())
+    {
+        log_statistics.insert(std::pair<std::string, LogStat>(process_name, LogStat(process_name)));
+    }
+
+    if(log_level == "Trace")
+    {
+        log_statistics.at(process_name).trace++;
+        return;
+    }
+    if(log_level == "Debug")
+    {
+        log_statistics.at(process_name).debug++;
+        return;
+    }
+    if(log_level == "Info")
+    {
+        log_statistics.at(process_name).info++;
+        return;
+    }
+    if(log_level == "Warn")
+    {
+        log_statistics.at(process_name).warn++;
+        return;
+    }
+    if(log_level == "Error")
+    {
+        log_statistics.at(process_name).error++;
+        return;
     }
 }
 
@@ -52,7 +100,7 @@ void DirectoryLogScan::analyze_file(FileInfo file_info)
     {
         while (getline(in, line))
         {
-            std::cout << line << std::endl;
+            this->line_parse(line);
         }
     }
     in.close();
@@ -80,9 +128,18 @@ void DirInfo::scan_path()
 std::ostream& operator<<(std::ostream& ostream, DirectoryLogScan const& scan)
 {
     ostream<<"path: "<<scan._path<<std::endl<<"files:"<<std::endl;
-    for(auto i : scan.path_files_info)
+    std::cout.width(10);
+    std::cout<<"Process";
+    std::cout<<"Trace";
+    std::cout<<"Debug";
+    std::cout<<"Info";
+    std::cout<<"Warn";
+    std::cout<<"Error";
+    for(auto i : scan.log_statistics)
     {
-        ostream<<i;
+        ostream<<i.first<<" "<<"  Trace: "<<i.second.trace<<
+        "  Debug: "<<i.second.debug<<"  Info: "<<i.second.info<<
+        "  Warn: "<<i.second.warn<<"  Error: "<<i.second.error<<std::endl;
     }
     return ostream;
 }

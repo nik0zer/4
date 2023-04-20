@@ -8,8 +8,29 @@
 #include <mutex>
 #include <thread>
 #include <fstream>
+#include <map>
 
 class DirectoryLogScan;
+
+class LogStat
+{
+    public:
+    std::string name;
+    int trace;
+    int debug;
+    int info;
+    int warn;
+    int error;
+
+    LogStat(std::string name) : name(name) 
+    {
+        trace = 0;
+        debug = 0;
+        info = 0;
+        warn = 0;
+        error = 0;
+    }
+};
 
 class FileInfo
 {
@@ -42,6 +63,8 @@ class DirectoryLogScan
     std::mutex _files_info_mutex;
     void collect_files(std::shared_ptr<DirInfo>);
     void analyze_file(FileInfo file_info);
+    void line_parse(std::string line);
+    std::map<std::string, LogStat> log_statistics;
 
     public:
     std::vector<FileInfo> path_files_info;
