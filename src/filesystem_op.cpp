@@ -46,6 +46,11 @@ void DirectoryLogScan::analyze_log_files()
     {
         i->join();
     }
+    for(auto i : this->log_statistics)
+    {
+        sort_log_statistics.push_back(i.second);
+    }
+    std::sort(sort_log_statistics.begin(), sort_log_statistics.end(), std::greater<LogStat>());
 }
 
 void DirectoryLogScan::line_parse(std::string line)
@@ -130,11 +135,11 @@ std::ostream& operator<<(std::ostream& ostream, DirectoryLogScan const& scan)
     ostream<<"path: "<<scan._path<<std::endl<<"files:"<<std::endl;
     std::cout<<std::setw(40)<<std::left<<"Process"<<std::setw(20)<<"Trace"<<std::setw(20)<<"Debug"<<std::setw(20)<<"Info"
     <<std::setw(20)<<"Warn"<<std::setw(20)<<"Error"<<std::endl;
-    for(auto i : scan.log_statistics)
+    for(auto i : scan.sort_log_statistics)
     {
-        ostream<<std::setw(40)<<std::left<<i.first<<std::setw(20)<<i.second.trace<<
-        std::setw(20)<<i.second.debug<<std::setw(20)<<i.second.info<<
-        std::setw(20)<<i.second.warn<<std::setw(20)<<i.second.error<<std::endl;
+        ostream<<std::setw(40)<<std::left<<i.name<<std::setw(20)<<i.trace<<
+        std::setw(20)<<i.debug<<std::setw(20)<<i.info<<
+        std::setw(20)<<i.warn<<std::setw(20)<<i.error<<std::endl;
     }
     return ostream;
 }
@@ -153,4 +158,26 @@ std::ostream& operator<<(std::ostream& ostream, FileInfo const& file_info)
 {
     ostream<<"path: "<<file_info.file_path<<std::endl;
     return ostream;
+}
+
+
+
+bool operator<(const LogStat& a, const LogStat& b)
+{
+    return (a.debug + a.error + a.info + a.trace + a.warn < b.debug + b.error + b.info + b.trace + b.warn);
+}
+
+bool operator>(const LogStat& a, const LogStat& b)
+{
+    return (a.debug + a.error + a.info + a.trace + a.warn > b.debug + b.error + b.info + b.trace + b.warn);
+}
+
+bool operator<=(const LogStat& a, const LogStat& b)
+{
+    return (a.debug + a.error + a.info + a.trace + a.warn <= b.debug + b.error + b.info + b.trace + b.warn);
+}
+
+bool operator>=(const LogStat& a, const LogStat& b)
+{
+    return (a.debug + a.error + a.info + a.trace + a.warn >= b.debug + b.error + b.info + b.trace + b.warn);
 }

@@ -9,6 +9,7 @@
 #include <thread>
 #include <fstream>
 #include <map>
+#include <algorithm>
 
 class DirectoryLogScan;
 
@@ -67,6 +68,7 @@ class DirectoryLogScan
     std::map<std::string, LogStat> log_statistics;
 
     public:
+    std::vector<LogStat> sort_log_statistics;
     std::vector<FileInfo> path_files_info;
     std::vector<std::shared_ptr<DirInfo>> dirs_info_ptr;
     void scan_root_path();
