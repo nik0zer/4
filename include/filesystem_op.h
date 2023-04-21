@@ -64,6 +64,7 @@ class DirectoryLogScan
     private:
     std::filesystem::path _path;
     std::mutex _files_info_mutex;
+    std::mutex map_mutex;
     void collect_files(std::shared_ptr<DirInfo>);
     void analyze_file(FileInfo file_info);
     void line_parse(std::string line);

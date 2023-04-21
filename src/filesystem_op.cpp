@@ -72,7 +72,7 @@ void DirectoryLogScan::line_parse(std::string line)
     if(process_name == "" || process_name == "\0" || process_name == " " || process_name == "\n")
         return;
 
-
+    std::lock_guard<std::mutex> lock(map_mutex);
     if(log_statistics.find(process_name) == log_statistics.end())
     {
         log_statistics.insert(std::pair<std::string, LogStat>(process_name, LogStat(process_name)));
