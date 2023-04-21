@@ -1,0 +1,5 @@
+Analyze log files in directory: "../1"
+Process                                 |  Trace               Debug               Info                Warn                Error               
+calculator                              |  2                   1                   1                   1                   1                   
+browser                                 |  0                   1                   1                   1                   1                   
+fsik                                    |  0                   0                   1                   0                   0                   

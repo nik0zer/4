@@ -1,4 +1,10 @@
 #include "filesystem_op.h"
+#include <algorithm>
+#include <iostream>
+#include <thread>
+#include <fstream>
+
+
 
 void DirectoryLogScan::scan_root_path()
 {
@@ -132,14 +138,22 @@ void DirInfo::scan_path()
 
 std::ostream& operator<<(std::ostream& ostream, DirectoryLogScan const& scan)
 {
-    ostream<<"path: "<<scan._path<<std::endl<<"files:"<<std::endl;
-    std::cout<<std::setw(40)<<std::left<<"Process"<<std::setw(20)<<"Trace"<<std::setw(20)<<"Debug"<<std::setw(20)<<"Info"
-    <<std::setw(20)<<"Warn"<<std::setw(20)<<"Error"<<std::endl;
+    ostream<<"Analyze log files in directory: "<<scan._path<<std::endl;
+    ostream<<std::setw(PROCESS_PRINT_WIDTH)<<std::left<<"Process"<<"|"<<"  "<<
+    std::setw(LOG_LEVEL_PRINT_WIDTH)<<"Trace"
+    <<std::setw(LOG_LEVEL_PRINT_WIDTH)<<"Debug"
+    <<std::setw(LOG_LEVEL_PRINT_WIDTH)<<"Info"
+    <<std::setw(LOG_LEVEL_PRINT_WIDTH)<<"Warn"
+    <<std::setw(LOG_LEVEL_PRINT_WIDTH)<<"Error"<<std::endl;
+
     for(auto i : scan.sort_log_statistics)
     {
-        ostream<<std::setw(40)<<std::left<<i.name<<std::setw(20)<<i.trace<<
-        std::setw(20)<<i.debug<<std::setw(20)<<i.info<<
-        std::setw(20)<<i.warn<<std::setw(20)<<i.error<<std::endl;
+        ostream<<std::setw(PROCESS_PRINT_WIDTH)<<std::left<<i.name<<"|"<<"  "<<
+        std::setw(LOG_LEVEL_PRINT_WIDTH)<<i.trace<<
+        std::setw(LOG_LEVEL_PRINT_WIDTH)<<i.debug<<
+        std::setw(LOG_LEVEL_PRINT_WIDTH)<<i.info<<
+        std::setw(LOG_LEVEL_PRINT_WIDTH)<<i.warn<<
+        std::setw(LOG_LEVEL_PRINT_WIDTH)<<i.error<<std::endl;
     }
     return ostream;
 }

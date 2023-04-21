@@ -4,12 +4,14 @@
 #include <vector>
 #include <memory>
 #include <filesystem>
-#include <iostream>
 #include <mutex>
-#include <thread>
-#include <fstream>
 #include <map>
-#include <algorithm>
+
+enum Constants
+{
+    PROCESS_PRINT_WIDTH = 40,
+    LOG_LEVEL_PRINT_WIDTH = 20
+};
 
 class DirectoryLogScan;
 
