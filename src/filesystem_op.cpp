@@ -69,6 +69,9 @@ void DirectoryLogScan::line_parse(std::string line)
     endpos = line.find(']', pos + 1);
     std::string process_name = line.substr(pos + 1, endpos - pos - 1);
 
+    if(process_name == "" || process_name == "\0" || process_name == " " || process_name == "\n")
+        return;
+
 
     if(log_statistics.find(process_name) == log_statistics.end())
     {

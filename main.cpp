@@ -22,6 +22,7 @@ int main()
             return 0;
         }
         out_file<<scan;
+        out_file.close();
         return 0;
     }
     std::cout<<scan;
