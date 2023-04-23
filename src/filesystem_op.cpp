@@ -8,26 +8,33 @@
 
 void DirectoryLogScan::scan_root_path()
 {
-    for (const auto & entry : std::filesystem::directory_iterator(_path))
+    try
     {
-        if(entry.is_directory())
+        for (const auto & entry : std::filesystem::directory_iterator(_path))
         {
-            dirs_info_ptr.push_back(std::shared_ptr<DirInfo>(new DirInfo(entry.path())));
+            if(entry.is_directory())
+            {
+                dirs_info_ptr.push_back(std::shared_ptr<DirInfo>(new DirInfo(entry.path())));
+            }
+            else if(entry.is_regular_file())
+            {
+                if(entry.path().string().ends_with(".log"))
+                    path_files_info.push_back(FileInfo(entry.path()));
+            }
         }
-        else if(entry.is_regular_file())
+        std::vector<std::shared_ptr<std::thread>> threads;
+        for(auto i : dirs_info_ptr)
         {
-            if(entry.path().string().ends_with(".log"))
-                path_files_info.push_back(FileInfo(entry.path()));
+            threads.push_back(std::shared_ptr<std::thread>(new std::thread(&DirectoryLogScan::collect_files, this, i)));
+        }
+        for(auto i : threads)
+        {
+            i->join();
         }
     }
-    std::vector<std::shared_ptr<std::thread>> threads;
-    for(auto i : dirs_info_ptr)
+    catch(...)
     {
-        threads.push_back(std::shared_ptr<std::thread>(new std::thread(&DirectoryLogScan::collect_files, this, i)));
-    }
-    for(auto i : threads)
-    {
-        i->join();
+        throw;
     }
 }
 

@@ -10,7 +10,16 @@ int main()
     std::string path;
     std::cin>>path;
     DirectoryLogScan scan(path);
-    scan.scan_root_path();
+    try
+    {
+        scan.scan_root_path();
+    }
+    catch(std::exception& e)
+    {
+        std::cout<<e.what()<<std::endl;
+        return 0;
+    }
+
     scan.analyze_log_files();
     if(OUT_TO_FILE)
     {
